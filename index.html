@@ -159,6 +159,38 @@
             font-size: 12px;
             min-width: auto;
         }
+
+        .history-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .history-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .icon-button {
+            background: none;
+            color: #666;
+            min-width: auto;
+            padding: 5px;
+            transition: color 0.2s;
+        }
+
+        .icon-button:hover {
+            color: #333;
+        }
+
+        .history-section.collapsed #history-list {
+            display: none;
+        }
+
+        .history-section.collapsed #toggleHistory i {
+            transform: rotate(180deg);
+        }
     </style>
 </head>
 <body>
@@ -181,7 +213,17 @@
         <div id="toast" class="toast"><i class="fas fa-check"></i> 已复制到剪贴板！</div>
         
         <div class="history-section">
-            <h2>历史记录</h2>
+            <div class="history-header">
+                <h2>历史记录</h2>
+                <div class="history-buttons">
+                    <button id="toggleHistory" class="icon-button">
+                        <i class="fas fa-chevron-up"></i>
+                    </button>
+                    <button id="clearHistory" class="icon-button">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            </div>
             <div id="history-list"></div>
         </div>
     </div>
@@ -296,6 +338,32 @@
                 console.error('复制失败:', err);
                 alert("复制失败，请手动复制");
             });
+        });
+
+        // 清空历史记录
+        document.getElementById("clearHistory").addEventListener("click", () => {
+            if (confirm("确定要清空所有历史记录吗？")) {
+                localStorage.removeItem('conversionHistory');
+                historyManager.renderHistory();
+            }
+        });
+
+        // 折叠/展开历史记录
+        document.getElementById("toggleHistory").addEventListener("click", () => {
+            const historySection = document.querySelector('.history-section');
+            historySection.classList.toggle('collapsed');
+            
+            // 保存折叠状态
+            localStorage.setItem('historyCollapsed', historySection.classList.contains('collapsed'));
+        });
+
+        // 页面加载时恢复折叠状态
+        window.addEventListener('load', () => {
+            const historySection = document.querySelector('.history-section');
+            const isCollapsed = localStorage.getItem('historyCollapsed') === 'true';
+            if (isCollapsed) {
+                historySection.classList.add('collapsed');
+            }
         });
     </script>
 </body>
