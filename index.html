@@ -141,15 +141,13 @@
             const convertedText = inputText
                 // 替换行内公式 \( ... \) 为 $ ... $
                 .replace(/\\\((.+?)\\\)/g, '$$$1$')
-                // 替换块级公式 \[ ... \] 为 $$ ... $$，保持原有格式和缩进，去掉多余空行
+                // 替换块级公式 \[ ... \] 为 $$ ... $$
                 .replace(/(\s*)\\\[([\s\S]+?)\\\]/g, (match, indent, formula) => {
-                    // 去掉公式内容前后的空行和多余的空格
-                    const trimmedFormula = formula.trim();
-                    // 直接返回三行文本，中间一行是公式
-                    return `${indent}$$\n${indent}${trimmedFormula}\n${indent}$$`;
-                })
-                // 去掉可能产生的连续空行
-                .replace(/\n\s*\n\s*\n/g, '\n\n');
+                    // 移除开头和结尾的空白字符
+                    const cleanFormula = formula.replace(/^\s+|\s+$/g, '');
+                    // 使用单行格式，不添加额外的换行
+                    return `${indent}$$\n${indent}${cleanFormula}\n${indent}$$`;
+                });
 
             // 输出结果
             document.getElementById("output").textContent = convertedText;
