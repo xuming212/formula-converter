@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>公式转换工具</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -18,7 +19,8 @@
         }
         .input-group, .output-group {
             display: flex;
-            gap: 10px;
+            gap: 12px;
+            align-items: flex-start;
         }
         .text-area-container {
             flex: 1;
@@ -35,18 +37,33 @@
         button {
             padding: 10px 20px;
             cursor: pointer;
-            background-color: #4CAF50;
             color: white;
             border: none;
             border-radius: 4px;
-            transition: background-color 0.3s;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            min-width: 100px;
+            justify-content: center;
         }
-        button:hover {
-            background-color: #45a049;
+        button:active {
+            transform: scale(0.95);
+        }
+        button i {
+            font-size: 16px;
         }
         #convert {
             width: 100%;
             margin: 10px 0;
+            background-color: #4CAF50;
+            font-size: 16px;
+            padding: 12px 20px;
+        }
+        #convert:hover {
+            background-color: #45a049;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         }
         #output {
             min-height: 100px;
@@ -68,24 +85,27 @@
         }
         #clear:hover {
             background-color: #da190b;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         }
         #copy {
             background-color: #2196F3;
         }
         #copy:hover {
             background-color: #0b7dda;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         }
         .toast {
             position: fixed;
             bottom: 20px;
             right: 20px;
-            padding: 8px 16px;
-            background-color: rgba(0, 0, 0, 0.7);
+            padding: 10px 20px;
+            background-color: rgba(0, 0, 0, 0.8);
             color: white;
             border-radius: 4px;
             display: none;
             animation: fadeIn 0.2s;
             font-size: 14px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
         }
         @keyframes fadeIn {
             from {opacity: 0; transform: translateY(10px);}
@@ -101,16 +121,16 @@
             <div class="text-area-container">
                 <textarea id="input" rows="10" placeholder="在此输入带有公式的文本..."></textarea>
             </div>
-            <button id="clear">清空</button>
+            <button id="clear"><i class="fas fa-trash-alt"></i>清空</button>
         </div>
-        <button id="convert">转换</button>
+        <button id="convert"><i class="fas fa-exchange-alt"></i>转换</button>
         <div class="output-group">
             <div class="text-area-container">
                 <div id="output"></div>
             </div>
-            <button id="copy">复制</button>
+            <button id="copy"><i class="fas fa-copy"></i>复制</button>
         </div>
-        <div id="toast" class="toast">已复制到剪贴板！</div>
+        <div id="toast" class="toast"><i class="fas fa-check"></i> 已复制到剪贴板！</div>
     </div>
 
     <script>
