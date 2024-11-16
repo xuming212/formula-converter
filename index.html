@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>公式转换工具</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        textarea {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            font-family: monospace;
+            line-height: 1.5;
+        }
+        button {
+            padding: 10px 20px;
+            margin-top: 10px;
+            cursor: pointer;
+        }
+        #output {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            background: #f9f9f9;
+            white-space: pre-wrap;
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body>
+    <h1>公式格式转换工具</h1>
+    <textarea id="input" rows="10" placeholder="在此输入带有公式的文本..."></textarea>
+    <button id="convert">转换</button>
+    <div id="output"></div>
+
+    <script>
+        document.getElementById("convert").addEventListener("click", () => {
+            const inputText = document.getElementById("input").value;
+
+            // 转换逻辑
+            const convertedText = inputText
+                // 替换行内公式 \( ... \) 为 $ ... $
+                .replace(/\\\((.+?)\\\)/g, '$$$1$')
+                // 替换块级公式 \[ ... \] 为 $$ ... $$
+                .replace(/\\\[(.+?)\\\]/gs, '$$$$\n$1\n$$$$');
+
+            // 输出结果
+            document.getElementById("output").textContent = convertedText;
+        });
+    </script>
+</body>
+</html>
