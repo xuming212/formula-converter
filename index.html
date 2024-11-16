@@ -111,24 +111,12 @@
             from {opacity: 0; transform: translateY(10px);}
             to {opacity: 1; transform: translateY(0);}
         }
-        .format-select {
-            margin-bottom: 10px;
-            padding: 8px;
-            border-radius: 4px;
-            border: 1px solid #ccc;
-            font-size: 14px;
-        }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>公式格式转换工具</h1>
         
-        <select id="formatSelect" class="format-select">
-            <option value="markdown">Markdown ($ 格式)</option>
-            <option value="word">Word (UnicodeMath 格式)</option>
-        </select>
-
         <div class="input-group">
             <div class="text-area-container">
                 <textarea id="input" rows="10" placeholder="在此输入带有公式的文本..."></textarea>
@@ -146,95 +134,27 @@
     </div>
 
     <script>
-        // LaTeX 到 UnicodeMath 的转换映射
-        const latexToUnicodeMath = {
-            // 上标和下标
-            '^': '⁻',  // 上标
-            '_': '_',  // 下标
-            
-            // 常用数学符号
-            '\\lambda': 'λ',
-            '\\alpha': 'α',
-            '\\beta': 'β',
-            '\\sum': '∑',
-            '\\int': '∫',
-            '\\infty': '∞',
-            '\\times': '×',
-            '\\div': '÷',
-            '\\pm': '±',
-            '\\leq': '≤',
-            '\\geq': '≥',
-            '\\neq': '≠',
-            '\\approx': '≈',
-            
-            // 分数
-            '\\frac': '/',  // 简单分数转换
-            
-            // 根号
-            '\\sqrt': '√',
-            
-            // 其他常用符号
-            '\\rightarrow': '→',
-            '\\leftarrow': '←',
-            '\\Rightarrow': '⇒',
-            '\\Leftarrow': '⇐'
-        };
-
-        function convertToUnicodeMath(formula) {
-            // 移除最外层的 \( \) 或 \[ \]
-            formula = formula.replace(/^\\\(|\\\)$|\\\[|\\\]$/g, '');
-            
-            // 替换所有已知的 LaTeX 命令
-            for (const [latex, unicode] of Object.entries(latexToUnicodeMath)) {
-                formula = formula.replace(new RegExp(latex.replace(/\\/g, '\\\\'), 'g'), unicode);
-            }
-            
-            // 处理上标
-            formula = formula.replace(/\^{([^}]+)}/g, '⁽$1⁾');
-            formula = formula.replace(/\^(\w)/g, '⁽$1⁾');
-            
-            // 处理下标
-            formula = formula.replace(/_{([^}]+)}/g, '₍$1₎');
-            formula = formula.replace(/_(\w)/g, '₍$1₎');
-            
-            return formula;
-        }
-
         document.getElementById("convert").addEventListener("click", () => {
             const inputText = document.getElementById("input").value;
-            const format = document.getElementById("formatSelect").value;
 
-            let convertedText;
-            if (format === 'markdown') {
-                // 原有的 Markdown 转换逻辑
-                convertedText = inputText
-                    .replace(/\\\((.+?)\\\)/g, '$$$1$')
-                    .replace(/(\s*)\\\[([\s\S]*?)\\\]/g, (_, indent, formula) => {
-                        const cleanFormula = formula
-                            .split('\n')
-                            .map(line => line.trim())
-                            .filter(line => line)
-                            .join('\n' + indent);
-                        return `${indent}$$\n${indent}${cleanFormula}\n${indent}$$`;
-                    });
-            } else if (format === 'word') {
-                // Word 格式转换逻辑
-                convertedText = inputText
-                    .replace(/\\\((.+?)\\\)/g, (_, formula) => convertToUnicodeMath(formula))
-                    .replace(/(\s*)\\\[([\s\S]*?)\\\]/g, (_, indent, formula) => {
-                        return `${indent}${convertToUnicodeMath(formula)}`;
-                    });
-            }
+            let convertedText = inputText
+                .replace(/\\\((.+?)\\\)/g, '$$$1$')
+                .replace(/(\s*)\\\[([\s\S]*?)\\\]/g, (_, indent, formula) => {
+                    const cleanFormula = formula
+                        .split('\n')
+                        .map(line => line.trim())
+                        .filter(line => line)
+                        .join('\n' + indent);
+                    return `${indent}$$\n${indent}${cleanFormula}\n${indent}$$`;
+                });
 
             document.getElementById("output").textContent = convertedText;
         });
 
-        // 添加清空功能
         document.getElementById("clear").addEventListener("click", () => {
             document.getElementById("input").value = "";
         });
 
-        // 修改复制功能代码
         document.getElementById("copy").addEventListener("click", () => {
             const output = document.getElementById("output").textContent;
             navigator.clipboard.writeText(output).then(() => {
