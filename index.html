@@ -141,10 +141,16 @@
             const convertedText = inputText
                 // 替换行内公式 \( ... \) 为 $ ... $
                 .replace(/\\\((.+?)\\\)/g, '$$$1$')
-                // 替换块级公式 \[ ... \] 为 $$ ... $$，保持缩进
-                .replace(/(\s*)\\\[\s*([\s\S]*?)\s*\\\]/g, (_, indent, formula) => 
-                    `${indent}$$\n${indent}${formula.trim()}\n${indent}$$`
-                );
+                // 替换块级公式 \[ ... \] 为 $$ ... $$，保留前置空白
+                .replace(/(\s*)\\\[([\s\S]*?)\\\]/g, (_, indent, formula) => {
+                    // 处理公式内容：去除前后空白，并确保内容紧凑
+                    const cleanFormula = formula
+                        .split('\n')
+                        .map(line => line.trim())
+                        .filter(line => line)  // 移除空行
+                        .join('\n' + indent);  // 重新添加缩进
+                    return `${indent}$$\n${indent}${cleanFormula}\n${indent}$$`;
+                });
 
             // 输出结果
             document.getElementById("output").textContent = convertedText;
