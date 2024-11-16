@@ -18,7 +18,7 @@
         }
         button {
             padding: 10px 20px;
-            margin: 5px 5px 0 0;
+            margin-top: 10px;
             cursor: pointer;
         }
         #output {
@@ -28,81 +28,49 @@
             background: #f9f9f9;
             white-space: pre-wrap;
             font-family: monospace;
-            position: relative;
-        }
-        #copy-output {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            padding: 5px 10px;
-            cursor: pointer;
         }
     </style>
 </head>
 <body>
     <h1>公式格式转换工具</h1>
-    <textarea id="input" rows="10" placeholder="在此输入带有公式的文本..."></textarea>
-    <div>
-        <button id="convert">转换</button>
-        <button id="clear-input">清空输入</button>
+    <div style="display: flex; gap: 10px; align-items: start;">
+        <textarea id="input" rows="10" placeholder="在此输入带有公式的文本..."></textarea>
+        <button id="clear">清空</button>
     </div>
-    <div id="output-container" style="display:none;">
+    <button id="convert">转换</button>
+    <div style="display: flex; gap: 10px; align-items: start; margin-top: 20px;">
         <div id="output"></div>
-        <button id="copy-output">复制结果</button>
+        <button id="copy">复制</button>
     </div>
 
     <script>
-        // 获取元素
-        const inputField = document.getElementById("input");
-        const outputField = document.getElementById("output");
-        const convertButton = document.getElementById("convert");
-        const clearButton = document.getElementById("clear-input");
-        const copyButton = document.getElementById("copy-output");
-        const outputContainer = document.getElementById("output-container");
+        document.getElementById("convert").addEventListener("click", () => {
+            const inputText = document.getElementById("input").value;
 
-        // 转换逻辑
-        convertButton.addEventListener("click", () => {
-            const inputText = inputField.value;
-
-            // 如果输入框为空，不执行转换
-            if (!inputText.trim()) {
-                outputField.textContent = "请输入需要转换的内容！";
-                outputContainer.style.display = "block";
-                return;
-            }
-
+            // 转换逻辑
             const convertedText = inputText
-                .replace(/\\\((.+?)\\\)/g, '$$$1$') // 行内公式
-                .replace(/\\\[(.+?)\\\]/gs, '$$$$\n$1\n$$$$'); // 块级公式
+                // 替换行内公式 \( ... \) 为 $ ... $
+                .replace(/\\\((.+?)\\\)/g, '$$$1$')
+                // 替换块级公式 \[ ... \] 为 $$ ... $$
+                .replace(/\\\[(.+?)\\\]/gs, '$$$$\n$1\n$$$$');
 
-            // 显示输出结果
-            outputField.textContent = convertedText;
-            outputContainer.style.display = "block";
+            // 输出结果
+            document.getElementById("output").textContent = convertedText;
         });
 
-        // 清空输入框
-        clearButton.addEventListener("click", () => {
-            inputField.value = "";
+        // 添加清空功能
+        document.getElementById("clear").addEventListener("click", () => {
+            document.getElementById("input").value = "";
         });
 
-        // 复制输出内容
-        copyButton.addEventListener("click", () => {
-            const textToCopy = outputField.textContent;
-
-            if (!textToCopy.trim()) {
-                alert("没有内容可以复制！");
-                return;
-            }
-
-            // 使用 Clipboard API 复制到剪贴板
-            navigator.clipboard.writeText(textToCopy).then(() => {
-                alert("结果已复制到剪贴板！");
-            }).catch((err) => {
-                console.error("复制失败：", err);
-                alert("复制失败，请手动复制。");
+        // 添加复制功能
+        document.getElementById("copy").addEventListener("click", () => {
+            const output = document.getElementById("output").textContent;
+            navigator.clipboard.writeText(output).then(() => {
+                alert("已复制到剪贴板！");
+            }).catch(err => {
+                console.error('复制失败:', err);
+                alert("复制失败，请手动复制");
             });
         });
     </script>
