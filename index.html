@@ -75,11 +75,59 @@
         #copy:hover {
             background-color: #0b7dda;
         }
+        .instructions {
+            background-color: #e9f5ff;
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+        .example {
+            color: #666;
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #fff;
+            border-radius: 4px;
+        }
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border-radius: 4px;
+            display: none;
+            animation: fadeIn 0.3s, fadeOut 0.3s 1.7s;
+        }
+        @keyframes fadeIn {
+            from {opacity: 0;}
+            to {opacity: 1;}
+        }
+        @keyframes fadeOut {
+            from {opacity: 1;}
+            to {opacity: 0;}
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>公式格式转换工具</h1>
+        
+        <div class="instructions">
+            <strong>使用说明：</strong>
+            <p>本工具可以将 LaTeX 公式从 \( \) 和 \[ \] 格式转换为 $ $ 和 $$ $$ 格式。</p>
+            <div class="example">
+                示例：<br>
+                输入：<br>
+                行内公式：\(x^2 + y^2 = z^2\)<br>
+                行间公式：\[E = mc^2\]<br><br>
+                转换后：<br>
+                行内公式：$x^2 + y^2 = z^2$<br>
+                行间公式：$$<br>E = mc^2<br>$$
+            </div>
+        </div>
+
         <div class="input-group">
             <div class="text-area-container">
                 <textarea id="input" rows="10" placeholder="在此输入带有公式的文本..."></textarea>
@@ -93,6 +141,7 @@
             </div>
             <button id="copy">复制</button>
         </div>
+        <div id="toast" class="toast">已复制到剪贴板！</div>
     </div>
 
     <script>
@@ -115,11 +164,15 @@
             document.getElementById("input").value = "";
         });
 
-        // 添加复制功能
+        // 修改复制功能代码
         document.getElementById("copy").addEventListener("click", () => {
             const output = document.getElementById("output").textContent;
             navigator.clipboard.writeText(output).then(() => {
-                alert("已复制到剪贴板！");
+                const toast = document.getElementById("toast");
+                toast.style.display = "block";
+                setTimeout(() => {
+                    toast.style.display = "none";
+                }, 2000);
             }).catch(err => {
                 console.error('复制失败:', err);
                 alert("复制失败，请手动复制");
