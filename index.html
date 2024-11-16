@@ -137,12 +137,16 @@
         document.getElementById("convert").addEventListener("click", () => {
             const inputText = document.getElementById("input").value;
 
-            // 转换逻辑
+            // 改进的转换逻辑
             const convertedText = inputText
                 // 替换行内公式 \( ... \) 为 $ ... $
                 .replace(/\\\((.+?)\\\)/g, '$$$1$')
-                // 替换块级公式 \[ ... \] 为 $$ ... $$
-                .replace(/\\\[(.+?)\\\]/gs, '$$$$\n$1\n$$$$');
+                // 替换块级公式 \[ ... \] 为 $$ ... $$，保持原有格式
+                .replace(/\\\[([\s\S]+?)\\\]/g, (match, p1) => {
+                    // 去掉开头和结尾的空行，保留公式内部的格式
+                    const formula = p1.trim();
+                    return `$$\n${formula}\n$$`;
+                });
 
             // 输出结果
             document.getElementById("output").textContent = convertedText;
