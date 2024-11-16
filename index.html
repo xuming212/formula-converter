@@ -141,8 +141,10 @@
             const convertedText = inputText
                 // 替换行内公式 \( ... \) 为 $ ... $
                 .replace(/\\\((.+?)\\\)/g, '$$$1$')
-                // 替换块级公式 \[ ... \] 为 $$ ... $$，避免多余空行
-                .replace(/\\\[\s*([\s\S]*?)\s*\\\]/g, (_, formula) => `$$\n${formula.trim()}\n$$`);
+                // 替换块级公式 \[ ... \] 为 $$ ... $$，保持缩进
+                .replace(/(\s*)\\\[\s*([\s\S]*?)\s*\\\]/g, (_, indent, formula) => 
+                    `${indent}$$\n${indent}${formula.trim()}\n${indent}$$`
+                );
 
             // 输出结果
             document.getElementById("output").textContent = convertedText;
