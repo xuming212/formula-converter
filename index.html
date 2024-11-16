@@ -141,11 +141,11 @@
             const convertedText = inputText
                 // 替换行内公式 \( ... \) 为 $ ... $
                 .replace(/\\\((.+?)\\\)/g, '$$$1$')
-                // 替换块级公式 \[ ... \] 为 $$ ... $$，保持原有格式
-                .replace(/\\\[([\s\S]+?)\\\]/g, (match, p1) => {
-                    // 去掉开头和结尾的空行，保留公式内部的格式
-                    const formula = p1.trim();
-                    return `$$\n${formula}\n$$`;
+                // 替换块级公式 \[ ... \] 为 $$ ... $$，保持原有格式和缩进
+                .replace(/(\s*)\\\[([\s\S]+?)\\\]/g, (match, indent, formula) => {
+                    // 保持原有缩进，去掉公式内容前后的空行
+                    const trimmedFormula = formula.trim();
+                    return `${indent}$$\n${indent}${trimmedFormula}\n${indent}$$`;
                 });
 
             // 输出结果
