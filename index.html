@@ -218,14 +218,14 @@
                 const historyList = document.getElementById('history-list');
                 const history = this.getHistory();
                 
-                historyList.innerHTML = history.map(record => `
+                historyList.innerHTML = history.map((record, index) => `
                     <div class="history-item">
                         <div class="time">${record.time}</div>
                         <div class="history-content">
                             <div class="history-input">${record.input}</div>
                             <div class="history-output">${record.output}</div>
                         </div>
-                        <button onclick="copyHistoryText('${record.output.replace(/'/g, "\\'")}')">
+                        <button onclick="copyHistoryText(${index})">
                             <i class="fas fa-copy"></i> 复制结果
                         </button>
                     </div>
@@ -234,7 +234,10 @@
         };
 
         // 复制历史记录文本
-        function copyHistoryText(text) {
+        function copyHistoryText(index) {
+            const history = historyManager.getHistory();
+            const text = history[index].output;
+            
             navigator.clipboard.writeText(text).then(() => {
                 const toast = document.getElementById("toast");
                 toast.style.display = "block";
