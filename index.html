@@ -18,7 +18,7 @@
         }
         button {
             padding: 10px 20px;
-            margin-top: 10px;
+            margin: 5px 5px 0 0;
             cursor: pointer;
         }
         #output {
@@ -28,28 +28,82 @@
             background: #f9f9f9;
             white-space: pre-wrap;
             font-family: monospace;
+            position: relative;
+        }
+        #copy-output {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
         }
     </style>
 </head>
 <body>
     <h1>公式格式转换工具</h1>
     <textarea id="input" rows="10" placeholder="在此输入带有公式的文本..."></textarea>
-    <button id="convert">转换</button>
-    <div id="output"></div>
+    <div>
+        <button id="convert">转换</button>
+        <button id="clear-input">清空输入</button>
+    </div>
+    <div id="output-container" style="display:none;">
+        <div id="output"></div>
+        <button id="copy-output">复制结果</button>
+    </div>
 
     <script>
-        document.getElementById("convert").addEventListener("click", () => {
-            const inputText = document.getElementById("input").value;
+        // 获取元素
+        const inputField = document.getElementById("input");
+        const outputField = document.getElementById("output");
+        const convertButton = document.getElementById("convert");
+        const clearButton = document.getElementById("clear-input");
+        const copyButton = document.getElementById("copy-output");
+        const outputContainer = document.getElementById("output-container");
 
-            // 转换逻辑
+        // 转换逻辑
+        convertButton.addEventListener("click", () => {
+            const inputText = inputField.value;
+
+            // 如果输入框为空，不执行转换
+            if (!inputText.trim()) {
+                outputField.textContent = "请输入需要转换的内容！";
+                outputContainer.style.display = "block";
+                return;
+            }
+
             const convertedText = inputText
-                // 替换行内公式 \( ... \) 为 $ ... $
-                .replace(/\\\((.+?)\\\)/g, '$$$1$')
-                // 替换块级公式 \[ ... \] 为 $$ ... $$
-                .replace(/\\\[(.+?)\\\]/gs, '$$$$\n$1\n$$$$');
+                .replace(/\\\((.+?)\\\)/g, '$$$1$') // 行内公式
+                .replace(/\\\[(.+?)\\\]/gs, '$$$$\n$1\n$$$$'); // 块级公式
 
-            // 输出结果
-            document.getElementById("output").textContent = convertedText;
+            // 显示输出结果
+            outputField.textContent = convertedText;
+            outputContainer.style.display = "block";
+        });
+
+        // 清空输入框
+        clearButton.addEventListener("click", () => {
+            inputField.value = "";
+        });
+
+        // 复制输出内容
+        copyButton.addEventListener("click", () => {
+            const textToCopy = outputField.textContent;
+
+            if (!textToCopy.trim()) {
+                alert("没有内容可以复制！");
+                return;
+            }
+
+            // 使用 Clipboard API 复制到剪贴板
+            navigator.clipboard.writeText(textToCopy).then(() => {
+                alert("结果已复制到剪贴板！");
+            }).catch((err) => {
+                console.error("复制失败：", err);
+                alert("复制失败，请手动复制。");
+            });
         });
     </script>
 </body>
