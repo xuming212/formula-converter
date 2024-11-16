@@ -137,14 +137,12 @@
         document.getElementById("convert").addEventListener("click", () => {
             const inputText = document.getElementById("input").value;
 
-            // 完全重写的转换逻辑
+            // 转换逻辑
             const convertedText = inputText
                 // 替换行内公式 \( ... \) 为 $ ... $
                 .replace(/\\\((.+?)\\\)/g, '$$$1$')
-                // 替换块级公式 \[ ... \] 为 $$ ... $$
-                .replace(/(\s*)\\\[[\s\n]*(.+?)[\s\n]*\\\]/gs, (_, indent, formula) => 
-                    `${indent}$$\n${indent}${formula.trim()}\n${indent}$$`
-                );
+                // 替换块级公式 \[ ... \] 为 $$ ... $$，避免多余空行
+                .replace(/\\\[\s*([\s\S]*?)\s*\\\]/g, (_, formula) => `$$\n${formula.trim()}\n$$`);
 
             // 输出结果
             document.getElementById("output").textContent = convertedText;
